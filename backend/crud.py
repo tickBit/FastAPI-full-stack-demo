@@ -21,8 +21,10 @@ def create_user(db: Session, username: str, email: str, password: str, is_admin=
     db.refresh(user)
     return user
 
-def verify_password(plain, hashed):
-    return pwd_context.verify(plain, hashed)
+def verify_password(plain_password: str, hashed_password: str):
+    plain_password = plain_password.encode('utf-8')
+    hashed = bcrypt.hashpw(base64.b64encode(hashlib.sha256(plain_password).digest()), hashed_password.encode('utf-8'))
+    return hashed == hashed_password.encode('utf-8')
 
 def create_image(db: Session, filename: str, user_id: int):
     img = Image(filename=filename, uploaded_by=user_id)
