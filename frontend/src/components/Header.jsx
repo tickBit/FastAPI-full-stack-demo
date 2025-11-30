@@ -10,7 +10,7 @@ const Header = () => {
                 <Link to="/login">Login</Link>
                 <Link to="/register">Register</Link>
             </div>
-            <h1>Welcome to picture show app!</h1>
+            <h1>Picture show app</h1>
         </div>
         
     )

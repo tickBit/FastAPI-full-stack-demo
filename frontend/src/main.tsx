@@ -5,6 +5,7 @@ import './index.css'
 import App from './App'
 import Login from './components/Login'
 import Register from './components/Register'
+import { AuthProvider } from './contexts/AuthContext';
 
 const router = createBrowserRouter([{
     path: "/",
@@ -23,6 +24,8 @@ const router = createBrowserRouter([{
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <AuthProvider>
     <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )
