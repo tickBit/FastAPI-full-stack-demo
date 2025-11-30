@@ -120,10 +120,10 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    new_user = crud.create_user(db, user.name, user.email, user.password, is_admin = False)
+    new_user = crud.create_user(db, user.username, user.email, user.password, is_admin = False)
 
     # don't return password hash and is_admin flag
-    return {"id": new_user.id, "email": new_user.email, "name": new_user.username}
+    return {"id": new_user.id, "email": new_user.email, "username": new_user.username}
 
 @app.post("/auth/login", response_model=Token)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

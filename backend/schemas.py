@@ -5,7 +5,7 @@ from typing import Optional
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    name: str | None = None
+    username: str | None = None
     # is_admin: bool # removed from public schema
 class AdminCreate(UserCreate):
     """Admin-only schema — allows is_admin flag."""
@@ -14,7 +14,7 @@ class AdminCreate(UserCreate):
 class UserResponse(BaseModel):
     id: int
     email: str
-    name: str | None
+    username: str | None
     is_admin: bool
     
 class UserOut(BaseModel):
