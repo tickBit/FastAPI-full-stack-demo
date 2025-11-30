@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
 import uuid
+from dotenv import load_dotenv
 
 from database import SessionLocal, engine
 from models import Base, User
@@ -12,7 +13,9 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-SECRET_KEY = "SUPER_SECRET_KEY_abcdefghijklmnopqrstuxyz_SUPER_SECRET_KEY_abcdefghijklmnopqrstuxyz"   # vaihda omaan!
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
