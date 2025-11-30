@@ -12,8 +12,11 @@ from schemas import ImageBase, RatingCreate, Token, UserCreate, UserOut, AdminCr
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pwdlib import PasswordHash
 
 load_dotenv()
+
+password_hash = PasswordHash.recommended()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -37,7 +40,8 @@ def get_db():
     finally:
         db.close()
 
-
+def verify_password(plain_password, hashed_password):
+    return password_hash.verify(plain_password, hashed_password)
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -123,7 +127,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    new_user = crud.create_user(db, user.username, user.email, user.password, is_admin = False)
+    new_user = crud.create_user(db, user.username, user.email, password_hash.hash(user.password), is_admin = False)
 
     # don't return password hash and is_admin flag
     return {"id": new_user.id, "email": new_user.email, "username": new_user.username}
@@ -131,7 +135,8 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 @app.post("/auth/login", response_model=Token)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_username(db, form.username)
-    if not user or not crud.verify_password(form.password, user.password_hash):
+    
+    if not user or not verify_password(form.password, user.password_hash):
         raise HTTPException(401, "Invalid credentials")
 
     token = create_access_token({"sub": user.username})

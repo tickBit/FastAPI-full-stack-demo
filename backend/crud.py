@@ -12,19 +12,12 @@ def get_user_by_username(db: Session, username: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
-def create_user(db: Session, username: str, email: str, password: str, is_admin: bool):
-    password = password.encode('utf-8')
-    hashed = bcrypt.hashpw(base64.b64encode(hashlib.sha256(password).digest()), bcrypt.gensalt())
-    user = User(username=username, email=email, password_hash=hashed, is_admin=is_admin)
+def create_user(db: Session, username: str, email: str, password_hash: str, is_admin: bool):
+    user = User(username=username, email=email, password_hash=password_hash, is_admin=is_admin)
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
-
-def verify_password(plain_password: str, hashed_password: str):
-    plain_password = plain_password.encode('utf-8')
-    hashed = bcrypt.hashpw(base64.b64encode(hashlib.sha256(plain_password).digest()), hashed_password.encode('utf-8'))
-    return hashed == hashed_password.encode('utf-8')
 
 def create_image(db: Session, filename: str, user_id: int):
     img = Image(filename=filename, uploaded_by=user_id)
