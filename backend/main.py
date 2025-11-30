@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-SECRET_KEY = "SUPER_SECRET_KEY"   # vaihda omaan!
+SECRET_KEY = "SUPER_SECRET_KEY_abcdefghijklmnopqrstuxyz_SUPER_SECRET_KEY_abcdefghijklmnopqrstuxyz"   # vaihda omaan!
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
@@ -120,17 +120,8 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    new_user = crud.create_user(db, user.name, user.email, user.password, is_admin=False)  # Force is_admin=False
+    new_user = crud.create_user(db, user.name, user.email, user.password, is_admin = False)
     return {"id": new_user.id, "email": new_user.email, "name": new_user.username, "password": new_user.password_hash, "is_admin": new_user.is_admin}
-
-@app.post("/admin/users", response_model=dict)
-def create_admin_user(user: AdminCreate, db: Session = Depends(get_db), current_user = Depends(get_admin_user)):
-    """Admin-only endpoint — creates user with is_admin=True."""
-    db_user = crud.get_user_by_email(db, user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    new_user = crud.create_user(db, user, is_admin=True)
-    return {"id": new_user.id, "email": new_user.email, "name": new_user.name, "is_admin": new_user.is_admin}
 
 @app.post("/auth/login", response_model=Token)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

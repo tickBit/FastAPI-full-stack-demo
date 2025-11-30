@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str | None = None
-
+    # is_admin: bool # removed from public schema
 class AdminCreate(UserCreate):
     """Admin-only schema — allows is_admin flag."""
     pass  # Inherits email, password, name; is_admin set server-side
