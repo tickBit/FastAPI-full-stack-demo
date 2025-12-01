@@ -2,9 +2,7 @@ from sqlalchemy.orm import Session
 from models import Image, Rating
 from passlib.context import CryptContext
 from models import User
-import bcrypt
-import base64
-import hashlib
+
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
@@ -38,3 +36,9 @@ def add_rating(db: Session, image_id: int, user_id: int, stars: int):
 
 def get_image(db: Session, image_id: int):
     return db.query(Image).filter(Image.id == image_id).first()
+
+def delete_image(db: Session, image_id: int):
+    img = db.query(Image).filter(Image.id == image_id).first()
+    if img:
+        db.delete(img)
+        db.commit()

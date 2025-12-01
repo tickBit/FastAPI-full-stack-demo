@@ -27,3 +27,19 @@
   border-color:rgb(103, 27, 175);
   border-style:dotted;
 }
+
+.delete-pic {
+  margin: auto;
+  margin-top: 1em;
+  color: red;
+  width: 8%;
+  text-align: center;
+  background-color: lightsalmon;
+  border-radius: 4em;
+  border-width: 3px;
+  border-style: groove;
+}
+
+.delete-pic:hover {
+  cursor: pointer;
+}

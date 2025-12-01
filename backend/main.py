@@ -78,6 +78,28 @@ def get_admin_user(current_user=Depends(get_current_user)):
         raise HTTPException(403, "Admins only")
     return current_user
 
+# Admin: delete pic
+
+@app.delete("/admin/delete/{image_id}")
+def delete_image(
+    image_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)   # <-- tärkeä osa
+):
+    if not admin.is_admin:
+        raise HTTPException(status_code=403, detail="Admins only")
+
+    img = crud.get_image(db, image_id)
+    if not img:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    # delete image file
+    filepath = os.path.join("media/images", img.filename)
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    crud.delete_image(db, image_id)
+    return {"status": "ok"}
 
 # ---------- ADMIN: UPLOAD IMAGE ----------
 @app.post("/admin/upload", response_model=ImageBase)
@@ -138,7 +160,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     # don't return password hash and is_admin flag
     return {"id": new_user.id, "email": new_user.email, "username": new_user.username}
 
-@app.post("/auth/login", response_model=Token)
+@app.post("/auth/login", response_model=dict)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_username(db, form.username)
     
@@ -146,4 +168,4 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
         raise HTTPException(401, "Invalid credentials")
 
     token = create_access_token({"sub": user.username})
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer", "is_admin": str(user.is_admin)}

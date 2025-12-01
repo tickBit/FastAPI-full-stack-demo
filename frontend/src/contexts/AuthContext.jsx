@@ -11,7 +11,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('isLoggedIn', isLoggedIn.toString());
     localStorage.setItem('username', username);
     localStorage.setItem('token', token);
-    
   }, [isLoggedIn, username, token]);
 
   const login = ( name, token ) => {
@@ -24,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUsername('');
     setToken('');
+    localStorage.removeItem('is_admin');
   };
 
   return (

@@ -41,8 +41,15 @@ const Login = () => {
             const data = resp.data;
             if (data && data.access_token) {
                 login(username, data.access_token);
+                
                 setStatus("Login successful.");
                 setBackgroundColor("lightgreen");
+                
+                console.log(data);
+                /* The following is for the userinterface to show/hide features.
+                   There is still check in the backend to prevent unauthorized access. */
+                localStorage.setItem('is_admin', data.is_admin.toString());
+    
             } else {
                 setStatus("Login failed. Check credentials.");
                 setBackgroundColor("red");
