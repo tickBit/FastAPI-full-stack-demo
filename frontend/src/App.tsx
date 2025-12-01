@@ -17,7 +17,7 @@ function App() {
   const isAdmin = localStorage.getItem('is_admin');
   
   const [edit, setEdit] = React.useState(false);
-  
+    
   /*
   const handleStars = (e:undefined) => {
     console.log(`Rated image ${e}`);
@@ -44,7 +44,7 @@ function App() {
     const newDescription = textarea.value;
 
     setEdit(false);
-        
+    
     axios.put(`http://localhost:8000/update/${id}`,
       { description: newDescription },
       { headers: { 
@@ -55,7 +55,7 @@ function App() {
     .then(response => {
       console.log('Description updated:', response.data);
       // Update the images state with the new description
-      setImages(images.map((img: { id: number; filename: string; title: string; description: string; }) => 
+      setImages(images.map((img: { id: number; filename: string; description: string; }) => 
         img.id === id ? { ...img, description: newDescription } : img
       ));
     })
@@ -114,6 +114,7 @@ function App() {
                 
                 <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />  
                 
+                {isAdmin === 'True' ? <>
                 {!edit ? <>
                   <div className='pic-description' onDoubleClick={() => setEdit(!edit)}>
                   <p>{pic.description}</p>
@@ -128,11 +129,19 @@ function App() {
                   />
                   </div>
                   </>
+              
                 }
+              </>
+              : <>
+                <div className='pic-description'>
+                  <p>{pic.description}</p>
+                </div>
+              </>}
+              
               </div>
             ))}
             </>
-          }
+            }
           </div>
           <MyChatbot />
       </div>
