@@ -169,3 +169,22 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 
     token = create_access_token({"sub": user.username})
     return {"access_token": token, "token_type": "bearer", "is_admin": str(user.is_admin)}
+
+@app.put("/update/{image_id}")
+def update_image(
+    image_id: int,
+    description: str = Form(...),
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)
+):
+    if admin.is_admin is False:
+        raise HTTPException(status_code=403, detail="Admins only")
+    
+    img = crud.get_image(db, image_id)
+    if not img:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    img.description = description
+    db.commit()
+    db.refresh(img)
+    return img
