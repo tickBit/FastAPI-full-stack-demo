@@ -12,6 +12,7 @@ from schemas import ImageBase, RatingCreate, Token, UserCreate, UserOut, AdminCr
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from pwdlib import PasswordHash
 
 load_dotenv()
@@ -27,6 +28,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Serve static images
 app.mount("/media", StaticFiles(directory="media"), name="media")
