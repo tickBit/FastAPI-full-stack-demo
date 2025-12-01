@@ -31,10 +31,10 @@ const MyChatbot = () => {
 				let reply = "";
 				switch (params.userInput) {
 					case "What's the web app about?":
-						reply = "The web app is ...";
+						reply = "The web app is just a full-stack demo.";
 						break;
 					case "Why do I have to register to use it?":
-						reply = "You have to register, because...";
+						reply = "It's part of the demo.";
 						break;
 					case "Are these conversations recorded?":
 						reply = "No, you having conversation with your browser."
