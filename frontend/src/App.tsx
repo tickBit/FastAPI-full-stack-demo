@@ -35,9 +35,11 @@ function App() {
             {images.length === 0 ? <> <p>No pictures available yet.</p> </> :
              <>
             {images.map((pic: { id: number; filename: string; title: string; description: string; }) => (
-              <div key={pic.id} className="pic-card">
+              <div key={pic.id}>
                 <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" className="pic-image" />
-                <p className="pic-description">{pic.description}</p>
+                <div className='pic-description'>
+                <p>{pic.description}</p>
+                </div>
               </div>
             ))}
             </>

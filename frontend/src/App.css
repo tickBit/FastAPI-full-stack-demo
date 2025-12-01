@@ -18,7 +18,12 @@
 }
 
 .pic-description {
-  width: 100%;
-  background-color: azure;
+  margin: auto;
+  width: 25%;
+  background-color:aquamarine;
   padding: 1rem;
+  border-width: 5px;
+  border-radius: 4em;
+  border-color:rgb(103, 27, 175);
+  border-style:dotted;
 }
