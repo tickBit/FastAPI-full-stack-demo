@@ -1,10 +1,13 @@
 from getpass import getpass
+from pwdlib import PasswordHash
 from database import SessionLocal
 import crud
 
 """
  Simple script to create an admin user from the command line.
 """
+
+password_hash = PasswordHash.recommended()
 
 def main():
     db = SessionLocal()
@@ -25,7 +28,7 @@ def main():
             print("Passwords do not match.")
             return
 
-        admin = crud.create_user(db, name, email, password, is_admin=True)
+        admin = crud.create_user(db, name, email, password_hash.hash(password), is_admin=True)
         print("Created admin:", admin.id, admin.email)
     finally:
         db.close()
