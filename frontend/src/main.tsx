@@ -5,6 +5,7 @@ import './index.css'
 import App from './App'
 import Login from './components/Login'
 import Register from './components/Register'
+import Upload from './components/Upload'
 import { AuthProvider } from './contexts/AuthContext';
 import { ImageProvider } from './contexts/ImageContext';
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([{
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/upload",
+    element: <Upload />,
   }
 ]);
 
