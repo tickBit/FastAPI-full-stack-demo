@@ -17,8 +17,8 @@ def create_user(db: Session, username: str, email: str, password_hash: str, is_a
     db.refresh(user)
     return user
 
-def create_image(db: Session, filename: str, description: str, user_id: int):
-    img = Image(filename=filename, description=description, uploaded_by=user_id)
+def create_image(db: Session, filename: str, description: str):
+    img = Image(filename=filename, description=description)
     db.add(img) # only filename and uploader are stored; actual file is on disk
     db.commit()
     db.refresh(img)

@@ -1,5 +1,6 @@
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 from database import Base
 from sqlalchemy import Boolean
@@ -15,23 +16,22 @@ class User(Base):
 
 class Image(Base):
     __tablename__ = "images"
-
-    id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String, unique=True, index=True)
-    description = Column(String, nullable=True)
-    uploaded_by = Column(Integer, nullable=False)
-    uploaded_at = Column(DateTime, default=datetime.now)
-
-    ratings = relationship("Rating", back_populates="image")
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    filename: Mapped[str]
+    description: Mapped[str | None]
+    uploaded_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    
+    # relationship to ratings
+    ratings: Mapped[list["Rating"]] = relationship("Rating", back_populates="image")
 
 
 class Rating(Base):
-    __tablename__ = "ratings"
-
-    id = Column(Integer, primary_key=True, index=True)
-    image_id = Column(Integer, ForeignKey("images.id"))
-    user_id = Column(Integer)
-    stars = Column(Integer)  # 1–5
-    created_at = Column(DateTime, default=datetime.now)
-
-    image = relationship("Image", back_populates="ratings")
+    __tablename__ = "rating"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    image_id: Mapped[int] = mapped_column(ForeignKey("images.id"))
+    stars: Mapped[int]
+    
+    # relationship back to image
+    image: Mapped["Image"] = relationship("Image", back_populates="ratings")

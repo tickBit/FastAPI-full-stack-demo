@@ -131,21 +131,22 @@ def list_images(db: Session = Depends(get_db)):
 
 
 # ---------- USER: RATE IMAGE ----------
-@app.post("/images/{image_id}/rate")
+@app.post("/images/rate/{image_id}", response_model=dict)
 def rate_image(
     image_id: int,
     rating: RatingCreate,
     db: Session = Depends(get_db),
     user=Depends(get_current_user)   # tavallinen käyttäjä käy
 ):
-    if not 1 <= rating.stars <= 5:
+    print("Tahdet:", rating.stars)
+    if not 1 <= rating <= 5:
         raise HTTPException(status_code=400, detail="Rating must be 1-5")
 
     img = crud.get_image(db, image_id)
     if not img:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    r = crud.add_rating(db, image_id, user.id, rating.stars)
+    r = crud.add_rating(db, image_id, user.id, rating)
     return {"status": "ok", "rating_id": r.id}
 
 @app.post("/auth/register", response_model=dict)

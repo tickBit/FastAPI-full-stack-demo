@@ -1,10 +1,12 @@
+import React, { useEffect } from 'react';
 import axios from 'axios'
 import MyChatbot from './components/MyChatbot'
 import Header from './components/Header'
 import { useImage } from './contexts/ImageContext'
 import { useAuth } from './contexts/AuthContext'
 import './App.css'
-import React, { useEffect } from 'react';
+import './utils/StarReviews'
+import StarReviews from './utils/StarReviews';
 
   
 function App() {
@@ -15,6 +17,26 @@ function App() {
   const isAdmin = localStorage.getItem('is_admin');
   
   const [edit, setEdit] = React.useState(false);
+  
+  /*
+  const handleStars = (e:undefined) => {
+    console.log(`Rated image ${e}`);
+    
+    
+    axios.post(`http://localhost:8000/rate/${id}`,
+      { stars: stars },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(response => {
+      console.log('Rating submitted:', response.data);
+      // Optionally, update the images state to reflect the new average rating
+    })
+    .catch(error => {
+      console.error('Error submitting rating:', error);
+    });
+    
+  };
+  */
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
@@ -41,7 +63,8 @@ function App() {
       console.error('Error updating description:', error);
     });
   };
-          
+  
+  // admin's delete image
   const handleDelete = async(id: number) => {
     
     let resp;
@@ -81,13 +104,16 @@ function App() {
           <div className='container-pics'>
             {images.length === 0 ? <> <p>No pictures available yet.</p> </> :
              <>
-            {images.map((pic: { id: number; filename: string; title: string; description: string; }) => (
+            {images.map((pic: { id: number; filename: string; title: string; description: string; average_rating: number, total_ratings: number }) => (
               <div key={pic.id}>
                 {isAdmin === 'True' ?
                 <div className="delete-pic" onClick={() => handleDelete(pic.id)}>Delete</div>
                 : <> {null} </>}
                 
-                <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" className="pic-image" />
+                <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" />
+                
+                <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />  
+                
                 {!edit ? <>
                   <div className='pic-description' onDoubleClick={() => setEdit(!edit)}>
                   <p>{pic.description}</p>

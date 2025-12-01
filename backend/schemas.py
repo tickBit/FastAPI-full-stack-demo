@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -32,9 +31,11 @@ class Token(BaseModel):
 class ImageBase(BaseModel):
     id: int
     filename: str
-    description: str | None = None
+    description: str | None
     uploaded_at: datetime
-
+    average_rating: float | None = None  # add this
+    total_ratings: int = 0  # add this
+    
     class Config:
         orm_mode = True
 
