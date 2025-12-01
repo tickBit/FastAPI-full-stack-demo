@@ -2,9 +2,11 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import Header from './Header';
 import React from 'react';
+import { useImage } from '../contexts/ImageContext';
 
 const Upload = () => {
     
+    const { images, setImages } = useImage();
     const { token } = useAuth();
     
     const handleUpload = async(e) => {
@@ -34,6 +36,8 @@ const Upload = () => {
         }
         console.log("Upload successful:", resp.data);
         
+        // add new image to image context
+        setImages(prevImages => [...prevImages, resp.data]);
     }
     
     return (
