@@ -18,6 +18,7 @@ class Image(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, unique=True, index=True)
+    description = Column(String, nullable=True)
     uploaded_by = Column(Integer, nullable=False)
     uploaded_at = Column(DateTime, default=datetime.now)
 

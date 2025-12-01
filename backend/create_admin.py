@@ -21,7 +21,11 @@ def main():
             print("User with that email already exists.")
             return
 
-        name = input("Name (optional): ").strip() or None
+        name = input("Username: ").strip()
+        if not name:
+            print("Username required.")
+            return
+        
         password = getpass("Password: ")
         password_confirm = getpass("Confirm password: ")
         if password != password_confirm:
