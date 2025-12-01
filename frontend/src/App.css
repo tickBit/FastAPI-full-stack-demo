@@ -10,3 +10,9 @@
   margin-left: 2rem;
   margin-right: 2rem;
 }
+
+.pic-image {
+  margin-top: 1em;
+  border-style:double;
+  border-width: 5px;
+}

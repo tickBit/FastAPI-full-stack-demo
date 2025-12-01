@@ -125,10 +125,6 @@ def rate_image(
     r = crud.add_rating(db, image_id, user.id, rating.stars)
     return {"status": "ok", "rating_id": r.id}
 
-@app.get("/images", response_model=list[ImageBase])
-def list_images(db: Session = Depends(get_db)):
-    return crud.list_images(db)
-
 @app.post("/auth/register", response_model=dict)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     """Public endpoint — creates regular user only (is_admin always False)."""
