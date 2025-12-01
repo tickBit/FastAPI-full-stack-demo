@@ -16,3 +16,9 @@
   border-style:double;
   border-width: 5px;
 }
+
+.pic-description {
+  width: 100%;
+  background-color: azure;
+  padding: 1rem;
+}

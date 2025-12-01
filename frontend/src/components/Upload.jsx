@@ -12,12 +12,12 @@ const Upload = () => {
     const handleUpload = async(e) => {
         e.preventDefault();
         
-        const title = e.target.title.value;
+        const desc = e.target.desc.value;
         const fileInput = e.target.file;
         const file = fileInput.files[0];
         
         const formData = new FormData();
-        formData.append("title", title);
+        formData.append("description", desc);
         formData.append("file", file);
         
         let resp;
@@ -51,9 +51,9 @@ const Upload = () => {
         <div className="upload">
             <form onSubmit={handleUpload}>
                 <div className="form-group">
-                    <label>Picture Title:</label>
+                    <label>Picture description:</label>
                     <br/>
-                    <input type="text" name="title" id="title" />
+                    <textarea cols="50" rows="3" name="desc" id="desc" />
                     <br/>
                     <label>Picture File:</label>
                     <br/>

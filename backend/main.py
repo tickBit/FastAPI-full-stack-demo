@@ -1,10 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
 import uuid
 from dotenv import load_dotenv
-
+from typing import Annotated
 from database import SessionLocal, engine
 from models import Base, User
 import crud
@@ -83,6 +83,7 @@ def get_admin_user(current_user=Depends(get_current_user)):
 @app.post("/admin/upload", response_model=ImageBase)
 async def upload_image(
     file: UploadFile = File(...),
+    description: Annotated[str | None, Form()] = None,
     db: Session = Depends(get_db),
     admin: User = Depends(get_admin_user)   # <-- tärkeä osa
 ):
@@ -96,7 +97,7 @@ async def upload_image(
     with open(filepath, "wb") as f:
         f.write(await file.read())
 
-    img = crud.create_image(db, filename, admin.id)
+    img = crud.create_image(db, filename, description, admin.id)
     return img
 
 

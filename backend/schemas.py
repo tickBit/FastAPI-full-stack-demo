@@ -32,6 +32,7 @@ class Token(BaseModel):
 class ImageBase(BaseModel):
     id: int
     filename: str
+    description: str | None = None
     uploaded_at: datetime
 
     class Config:
