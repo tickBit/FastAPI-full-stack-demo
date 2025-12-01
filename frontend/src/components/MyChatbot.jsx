@@ -68,7 +68,7 @@ const MyChatbot = () => {
       disabled: true,
     },
 	tooltip: {
-		text: "Ask about the web app! 😊"
+		text: "Ask about this web app! 😊"
 	}
   };
 	
