@@ -6,6 +6,7 @@ import App from './App'
 import Login from './components/Login'
 import Register from './components/Register'
 import { AuthProvider } from './contexts/AuthContext';
+import { ImageProvider } from './contexts/ImageContext';
 
 const router = createBrowserRouter([{
     path: "/",
@@ -25,7 +26,9 @@ const router = createBrowserRouter([{
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-    <RouterProvider router={router} />
+      <ImageProvider>
+        <RouterProvider router={router} />
+      </ImageProvider>
     </AuthProvider>
   </StrictMode>,
 )

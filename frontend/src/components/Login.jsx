@@ -1,11 +1,23 @@
 import axios from "axios";
+import { Link } from "react-router";
 import Header from "./Header";
 import { useAuth } from "../contexts/AuthContext";
+import React, { useEffect } from "react";
 
 const Login = () => {
 
-    const { login } = useAuth();    
+    const { username, login } = useAuth();    
     
+    const [status, setStatus] = React.useState("Waiting");
+    const [backgroundColor, setBackgroundColor] = React.useState("lightgrey");
+
+    useEffect(() => {
+        if (username === "") {
+            setStatus("Logged out.");
+            setBackgroundColor("lightgrey");
+        }
+    }, [username]);
+       
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -23,20 +35,22 @@ const Login = () => {
             
             resp = await axios.post("http://localhost:8000/auth/login", params, {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                withCredentials: false,
-                timeout: 10000,
+                withCredentials: false
             });
         
             const data = resp.data;
             if (data && data.access_token) {
                 login(username, data.access_token);
+                setStatus("Login successful.");
+                setBackgroundColor("lightgreen");
             } else {
-                alert("Login failed");
+                setStatus("Login failed. Check credentials.");
+                setBackgroundColor("red");
             }
             
         } catch (error) {
-            console.error("Error during login:", error);
-            alert("An error occurred during login. Please try again.");
+            setStatus(error.response ? error.response.data.detail : "Error.");
+            setBackgroundColor("red");
         }
     }
     
@@ -46,16 +60,30 @@ const Login = () => {
         <div className="login">
             <h2>Login Page</h2>
             
-            <div>
+            <div className="login-status" style={{ backgroundColor: backgroundColor }}>
+                <div className="column">
+                    <p>Status: </p>
+                </div>
+                <div className="column">
+                    <p>{status}</p>
+                </div>
+            </div>
+            
+            <div className="login-form">
             <form onSubmit={handleLogin}>
+            <div className="form-group">
                 <label>Username:</label>
+                <br/>
                 <input type="text" name="username" id="username" />
-                
+                <br/>
                 <label>Password:</label>
+                <br/>
                 <input type="password" name="password" id="password" />
-                
-                <button type="submit">Login</button>
+                <br/>
+                <button type="submit" className="buttons">Login</button>
+            </div>
             </form>
+            {username !== "" && <Link to="/">Browse pictures</Link>}
             </div>
         </div>
         </>

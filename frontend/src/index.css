@@ -13,30 +13,85 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
-  width: 100%;
+.container-nav {
+  text-align: right;
+  padding: 0.5em;
 }
 
-.navigation {
+.navigation a {
   color: white;
-  text-align: right;  
+}
+
+.navigation a:hover {
+  color:yellow;
+}
+
+.navigation-admin a {
+  color:rgb(228, 145, 145);
+}
+
+.navigation-admin a:hover {
+  color:red;
+}
+
+.login-form {
+  width: 15%;
+  margin:auto;
+}
+
+.form-group {
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+.login-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: auto;
+  width: 20%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-color: #1a1a1a;
+  border-style: groove;
+  border-radius: 1em;
+}
+
+.column {
+  flex: 1;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .login-status {
+        flex-direction: column; /* Stack columns on smaller screens */
+    }
+}
+
+.buttons {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  color:whitesmoke;
+  background-color: blue;
+  margin-top: 0.5rem;
 }
 
 .header {
-  padding: 0.05rem;
   background-color: #535bf2;
-  color: aliceblue;
+  padding: 0.2em;
 }
 
 a {
   margin-left: 1rem;
   margin-right: 1rem;
   font-weight: 500;
-  color: lightcyan;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -47,8 +102,7 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  color: aliceblue;
 }
 
 button {
