@@ -8,14 +8,7 @@ const StarReviews = (props) => {
     const [emptyStars, setEmptyStars] = React.useState(0);
     
     const handleClick = (e) => {
-        if (fullStars == 5 && e == 5) {
-            setFullStars(0);
-            setHalfStars(0);
-            setEmptyStars(5);
-            return;
-        }
-        
-        if (fullStars == 1 && e == 1) {
+        if (fullStars == e) {
             setFullStars(0);
             setHalfStars(0);
             setEmptyStars(5);
