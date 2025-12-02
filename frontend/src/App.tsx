@@ -110,7 +110,7 @@ function App() {
                 <div className="delete-pic" onClick={() => handleDelete(pic.id)}>Delete</div>
                 : <> {null} </>}
                 
-                <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" />
+                <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" className='pic-image' />
                 
                 <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />  
                 
