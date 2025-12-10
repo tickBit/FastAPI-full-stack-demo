@@ -122,7 +122,7 @@ function App() {
                 
                 <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" className='pic-image' />
                 
-                <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />  
+                <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />                 
                 
                 {isAdmin === 'True' ? <>
                 {!edit ? <>

@@ -75,3 +75,7 @@
   margin-top: 0.5rem;
   margin-left: 1rem;
 }
+
+.disk {
+  cursor: pointer;
+}
