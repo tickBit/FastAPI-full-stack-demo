@@ -43,3 +43,30 @@
 .delete-pic:hover {
   cursor: pointer;
 }
+
+.dialog {
+  width: 20%;
+  height: 30%;
+  margin: auto auto;
+  position: fixed;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0; */
+  background-color: rgba(205, 42, 42, 1.0);
+  text-align: center;
+  border-width: 3px;
+  border-style: groove;
+  border-radius: 5em;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  padding-bottom: 1rem;
+  z-index: 2000;
+}
+
+.buttons {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  color:whitesmoke;
+  background-color: blue;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+}

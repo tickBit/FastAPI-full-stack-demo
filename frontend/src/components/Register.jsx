@@ -1,7 +1,17 @@
+import React from 'react';
 import axios from 'axios';
+import Dialog from './Dialog';
 
 const Register = () => {
 
+    const [isError, setIsError] = React.useState(false);
+    const [errorTitle, setErrorTitle] = React.useState("");
+    
+    const onOk = () => {
+        setIsError(false);
+        return true;
+    }
+    
     const handleRegister = async(e) => {
         e.preventDefault();
         
@@ -10,13 +20,15 @@ const Register = () => {
         const password = e.target.password.value;
         const password2 = e.target.password2.value;
         
-        if (username.trim() === null) {
+        if (username.trim() === "") {
             console.log("Please provide username");
             return;
         }
         
-        if (email.trim() === null) {
+        if (email.trim() === "") {
             console.log("Please provide email");
+            setErrorTitle("Please provide an email");
+            setIsError(true);
             return;
         }
         
@@ -36,6 +48,7 @@ const Register = () => {
                         console.log(response);
                 }).catch(response => {
                         console.log(response);
+                        
                 });     
     }
     
@@ -44,6 +57,8 @@ const Register = () => {
         <div className="register">
             <h2>Register Page</h2>
         </div>
+        
+        {isError ? <Dialog title={errorTitle} ok="Ok" onConfirm={() => onOk()} color="lightred" /> : null }
         
         <div className="login-form">
             <form onSubmit={handleRegister} >
