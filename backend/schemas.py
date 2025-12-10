@@ -42,3 +42,10 @@ class ImageBase(BaseModel):
 
 class RatingCreate(BaseModel):
     stars: int
+
+class RatingOut(BaseModel):
+    id: int
+    stars: int
+
+    class Config:
+        orm_mode = True

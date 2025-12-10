@@ -1,14 +1,15 @@
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 import os
 import uuid
 from dotenv import load_dotenv
 from typing import Annotated
 from database import SessionLocal, engine
-from models import Base, User
+from models import Base, User, Image, ImageOut, Rating, RatingOut
 import crud
-from schemas import ImageBase, RatingCreate, Token, UserCreate, UserOut, AdminCreate
+from schemas import ImageBase, RatingCreate, UserCreate
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -32,7 +33,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # frontend origin
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -124,11 +125,33 @@ async def upload_image(
 
 
 # ---------- USER: LIST IMAGES ----------
-@app.get("/images", response_model=list[ImageBase])
+@app.get("/images", response_model=list[dict])
 def list_images(db: Session = Depends(get_db)):
     imgs = crud.list_images(db)
-    return imgs
+    
+    arr = []
+    for img in imgs:
+        avg_rating = db.query(func.avg(Rating.stars)).filter(Rating.image_id == img.id).scalar()
+        arr.append({"id": img.id, "filename": img.filename ,"average_rating": avg_rating, "description": img.description })
+    return arr
 
+@app.get("/images/{image_id}", response_model=ImageOut)
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    img = db.query(Image).filter(Image.id == image_id).first()
+
+    if not img:
+        raise HTTPException(404, "Image not found")
+
+    avg_rating = db.query(func.avg(Rating.stars)).filter(Rating.image_id == image_id).scalar()
+    count = db.query(func.count(Rating.id)).filter(Rating.image_id == image_id).scalar()
+
+    return {
+        "id": img.id,
+        "filename": img.filename,
+        "description": img.description,
+        "average_rating": round(avg_rating, 1) if avg_rating else None,
+        "total_ratings": count
+    }
 
 # ---------- USER: RATE IMAGE ----------
 @app.post("/images/rate/{image_id}", response_model=dict)
@@ -136,18 +159,24 @@ def rate_image(
     image_id: int,
     rating: RatingCreate,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user)   # tavallinen käyttäjä käy
+    user=Depends(get_current_user)
 ):
-    print("Tahdet:", rating.stars)
-    if not 1 <= rating <= 5:
+    if not 1 <= rating.stars <= 5:
         raise HTTPException(status_code=400, detail="Rating must be 1-5")
 
     img = crud.get_image(db, image_id)
     if not img:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    r = crud.add_rating(db, image_id, user.id, rating)
-    return {"status": "ok", "rating_id": r.id}
+    r = crud.add_or_update_rating(db, image_id, user.id, rating.stars)
+
+    return {"status": "ok", "rating_id": r.id, "updated": True}
+
+@app.get("/images/{image_id}/ratings", response_model=list[RatingOut])
+def get_ratings(image_id: int, db: Session = Depends(get_db)):
+    ratings = db.query(Rating).filter(Rating.image_id == image_id).all()
+    return ratings
+
 
 @app.post("/auth/register", response_model=dict)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):

@@ -33,7 +33,7 @@ def main():
             return
 
         admin = crud.create_user(db, name, email, password_hash.hash(password), is_admin=True)
-        print("Created admin:", admin.id, admin.email)
+        print("Created admin.")
     finally:
         db.close()
 

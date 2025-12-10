@@ -27,15 +27,31 @@ def create_image(db: Session, filename: str, description: str):
 def list_images(db: Session):
     return db.query(Image).all()
 
-def add_rating(db: Session, image_id: int, user_id: int, stars: int):
-    rating = Rating(image_id=image_id, user_id=user_id, stars=stars)
-    db.add(rating)
+def add_or_update_rating(db: Session, image_id: int, user_id: int, stars: int):
+    existing = db.query(Rating).filter(
+        Rating.image_id == image_id,
+        Rating.user_id == user_id
+    ).first()
+
+    if existing:
+        existing.stars = stars
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    new_rating = Rating(image_id=image_id, user_id=user_id, stars=stars)
+    db.add(new_rating)
     db.commit()
-    db.refresh(rating)
-    return rating
+    db.refresh(new_rating)
+    return new_rating
+
 
 def get_image(db: Session, image_id: int):
     return db.query(Image).filter(Image.id == image_id).first()
+
+def get_ratings(db: Session, image_id):
+    return db.query(Rating).filter(Rating.image_id == image_id).all()
+
 
 def delete_image(db: Session, image_id: int):
     img = db.query(Image).filter(Image.id == image_id).first()
