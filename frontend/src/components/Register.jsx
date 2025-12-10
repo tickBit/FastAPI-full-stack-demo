@@ -22,6 +22,8 @@ const Register = () => {
         
         if (username.trim() === "") {
             console.log("Please provide username");
+            setErrorTitle("Please prive username");
+            setIsError(true);
             return;
         }
         
@@ -34,6 +36,8 @@ const Register = () => {
         
         if (password !== password2) {
             console.log("Passwords don't match!");
+            setErrorTitle("Passwords don't match!");
+            setIsError(true);
             return;
         }
         
@@ -48,6 +52,8 @@ const Register = () => {
                         console.log(response);
                 }).catch(response => {
                         console.log(response);
+                        setErrorTitle("Something went wrong");
+                        setIsError(true);
                         
                 });     
     }
