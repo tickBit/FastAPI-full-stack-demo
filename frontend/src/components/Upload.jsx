@@ -7,7 +7,7 @@ import { useImage } from '../contexts/ImageContext';
 const Upload = () => {
     
     const { images, setImages } = useImage();
-    const { token } = useAuth();
+    const { token, isLoggedIn, is_admin } = useAuth();
     
     const handleUpload = async(e) => {
         e.preventDefault();
@@ -48,12 +48,13 @@ const Upload = () => {
             <p>Here admin users can upload new pictures.</p>
         </div>
         
+        {isLoggedIn === true  && is_admin === "True" ? <>
         <div className="upload">
             <form onSubmit={handleUpload}>
                 <div className="form-group">
                     <label>Picture description:</label>
                     <br/>
-                    <textarea cols="50" rows="3" name="desc" id="desc" />
+                    <textarea cols="60" rows="3" name="desc" id="desc" />
                     <br/>
                     <label>Picture File:</label>
                     <br/>
@@ -63,6 +64,8 @@ const Upload = () => {
                 </div>
             </form>
         </div>
+        </>
+        : null }
         </>
  
     )

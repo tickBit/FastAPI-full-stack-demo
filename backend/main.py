@@ -32,7 +32,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # frontend origin
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -104,9 +104,9 @@ def delete_image(
 # ---------- ADMIN: UPLOAD IMAGE ----------
 @app.post("/admin/upload", response_model=ImageBase)
 async def upload_image(
+    db: Session = Depends(get_db),
     file: UploadFile = File(...),
     description: Annotated[str | None, Form()] = None,
-    db: Session = Depends(get_db),
     admin: User = Depends(get_admin_user)   # <-- tärkeä osa
 ):
     # ensure images folder exists
@@ -119,7 +119,7 @@ async def upload_image(
     with open(filepath, "wb") as f:
         f.write(await file.read())
 
-    img = crud.create_image(db, filename, description, admin.id)
+    img = crud.create_image(db, filename, description)
     return img
 
 

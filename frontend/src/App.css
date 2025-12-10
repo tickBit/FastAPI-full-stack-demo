@@ -60,6 +60,11 @@
   z-index: 2000;
 }
 
+.upload {
+  margin: auto;
+  width: 25%;
+}
+
 .buttons {
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
