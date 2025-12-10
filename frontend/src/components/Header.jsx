@@ -15,13 +15,13 @@ const Header = () => {
                     <Link to="/">Home</Link>
                     {isLoggedIn === false ? <>
                      <Link to="/login">Login</Link>
+                     <Link to="/register">Register</Link>
                      </>
                      :
                      <>
                      <Link onClick={() => logout()}>Logout</Link>
                     </>
                     }
-                    <Link to="/register">Register</Link>
                 </div>
                 <div className="navigation-admin">
                     <Link to="/upload">Upload (admin)</Link>

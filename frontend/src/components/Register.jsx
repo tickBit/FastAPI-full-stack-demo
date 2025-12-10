@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Dialog from './Dialog';
+import Header from './Header';
 
 const Register = () => {
 
@@ -60,6 +61,7 @@ const Register = () => {
     
     return (
         <>
+        <Header />
         <div className="register">
             <h2>Register Page</h2>
         </div>
