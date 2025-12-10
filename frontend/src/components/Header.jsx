@@ -6,7 +6,7 @@ import '../index.css';
 
 const Header = () => {
 
-    const { isLoggedIn, logout } = useAuth();
+    const { isLoggedIn, logout, is_admin } = useAuth();
         
     return (
         <div className="header">
@@ -26,6 +26,7 @@ const Header = () => {
                 <div className="navigation-admin">
                     <Link to="/upload">Upload (admin)</Link>
                 </div>
+                {isLoggedIn === true && is_admin === "True" ? <p style={{textAlign: "center"}}>Hello, admin.</p> : null}
             </div>
             <h1>Picture show app</h1>
         </div>

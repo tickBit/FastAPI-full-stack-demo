@@ -17,7 +17,9 @@ function App() {
   const isAdmin = localStorage.getItem('is_admin');
   
   const [edit, setEdit] = React.useState(false);
-    
+  const [description, setDescription] = React.useState("");
+  const [edited, setEdited] = React.useState(false);
+  
   /*
   const handleStars = (e:undefined) => {
     console.log(`Rated image ${e}`);
@@ -40,13 +42,19 @@ function App() {
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
-    const textarea = document.querySelector('.pic-description textarea') as HTMLTextAreaElement;
-    const newDescription = textarea.value;
+    
+    setEdited(false);
+    const desc = document.querySelector("textarea")?.value.trim();
 
+    setDescription(desc || "");
+    
     setEdit(false);
     
-    axios.put(`http://localhost:8000/update/${id}`,
-      { description: newDescription },
+    if (desc !== description) setEdited(true); else setEdit(false);
+        
+    if (edited) {
+      axios.put(`http://localhost:8000/update/${id}`,
+      { description: desc },
       { headers: { 
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
@@ -55,14 +63,15 @@ function App() {
     .then(response => {
       console.log('Description updated:', response.data);
       // Update the images state with the new description
-      setImages(images.map((img: { id: number; filename: string; description: string; }) => 
-        img.id === id ? { ...img, description: newDescription } : img
+      setImages(images.map((img: { id: number; filename: string; desc: string; }) => 
+        img.id === id ? { ...img, description: desc } : img
       ));
     })
     .catch(error => {
       console.error('Error updating description:', error);
     });
   };
+  }
   
   // admin's delete image
   const handleDelete = async(id: number) => {
@@ -95,6 +104,7 @@ function App() {
         console.error('Error fetching images:', error);
       });
       
+      
   }, [setImages]);
   
   return (
@@ -116,12 +126,12 @@ function App() {
                 
                 {isAdmin === 'True' ? <>
                 {!edit ? <>
-                  <div className='pic-description' onDoubleClick={() => setEdit(!edit)}>
+                  <div className='pic-description' onDoubleClick={() => { setEdit(!edit); setDescription(pic.description);  } }>
                   <p>{pic.description}</p>
                   </div>
                   </> :
                   <>
-                  <div className='pic-description' onDoubleClick={() => handleSaveDescription(pic.id)}>
+                  <div className='pic-description' onDoubleClick={() => handleSaveDescription(pic.id) } >
                   <textarea
                     defaultValue={pic.description}
                     rows={4}
