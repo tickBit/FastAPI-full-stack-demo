@@ -187,8 +187,10 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     new_user = crud.create_user(db, user.username, user.email, password_hash.hash(user.password), is_admin = False)
 
+    token = create_access_token({"sub": new_user.username})
+    
     # don't return password hash and is_admin flag
-    return {"id": new_user.id, "email": new_user.email, "username": new_user.username}
+    return {"id": new_user.id, "email": new_user.email, "username": new_user.username, "token": token}
 
 @app.post("/auth/login", response_model=dict)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

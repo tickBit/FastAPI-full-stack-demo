@@ -2,9 +2,11 @@ import React from 'react';
 import axios from 'axios';
 import Dialog from './Dialog';
 import Header from './Header';
+import { useAuth } from '../contexts/AuthContext';
 
 const Register = () => {
 
+    const { login } = useAuth();
     const [isError, setIsError] = React.useState(false);
     const [errorTitle, setErrorTitle] = React.useState("");
     
@@ -50,13 +52,23 @@ const Register = () => {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: false
                 }).then(response => {
-                        console.log(response);
+                     
+                        // admin users are created with separate script;
+                        // never from frontend
+                        // that's why is_admin parameter is always "False" here   
+                        login(response.data.username, response.data.token, "False");
+                        
                 }).catch(response => {
                         console.log(response);
                         setErrorTitle("Something went wrong");
                         setIsError(true);
                         
-                });     
+                });
+        
+        document.getElementById("username").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("password2").value = "";
     }
     
     return (
