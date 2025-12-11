@@ -23,9 +23,7 @@ function App() {
     
     setEdited(false);
     const desc = document.querySelector("textarea")?.value.trim();
-
-    setDescription(desc || "");
-    
+        
     setEdit(-1);
     
     if (desc !== description) setEdited(true); else setEdited(false);
@@ -118,7 +116,7 @@ function App() {
                   </>
                  :
                  <>
-                  <div className='pic-description' onDoubleClick={() => { setEdit(pic.id); setDescription(pic.description);  } }>
+                  <div className='pic-description' onDoubleClick={() => { setEdit(pic.id); setDescription(pic.description.trim());  } }>
                   <p>{pic.description}</p>
                   </div>
                   </>
