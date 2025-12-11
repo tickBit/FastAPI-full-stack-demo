@@ -14,7 +14,7 @@ function App() {
   const { images, setImages } = useImage();
   const { token, is_admin } = useAuth();
   
-  const [edit, setEdit] = React.useState(false);
+  const [edit, setEdit] = React.useState(-1);
   const [description, setDescription] = React.useState("");
   const [edited, setEdited] = React.useState(false);
   
@@ -26,9 +26,9 @@ function App() {
 
     setDescription(desc || "");
     
-    setEdit(false);
+    setEdit(-1);
     
-    if (desc !== description) setEdited(true); else setEdit(false);
+    if (desc !== description) setEdited(true); else setEdited(false);
         
     if (edited) {
       axios.put(`http://localhost:8000/update/${id}`,
@@ -96,7 +96,7 @@ function App() {
             {images.length === 0 ? <> <p>No pictures available yet.</p> </> :
              <>
             {images.map((pic: { id: number; filename: string; title: string; description: string; average_rating: number, total_ratings: number }) => (
-              <div key={pic.id}>
+              <div key={"a"+pic.id}>
                 {is_admin === 'True' ?
                 <div className="delete-pic" onClick={() => handleDelete(pic.id)}>Delete</div>
                 : <> {null} </>}
@@ -106,21 +106,22 @@ function App() {
                 <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} picId={pic.id} />                 
                 
                 {is_admin === 'True' ? <>
-                {!edit ? <>
-                  <div className='pic-description' onDoubleClick={() => { setEdit(!edit); setDescription(pic.description);  } }>
-                  <p>{pic.description}</p>
-                  </div>
-                  </> :
-                  <>
+                {edit === pic.id ? 
+                 <>
                   <div className='pic-description' onDoubleClick={() => handleSaveDescription(pic.id) } >
                   <textarea
-                    defaultValue={pic.description}
+                    defaultValue={description}
                     rows={4}
                     cols={50}
                   />
                   </div>
                   </>
-              
+                 :
+                 <>
+                  <div className='pic-description' onDoubleClick={() => { setEdit(pic.id); setDescription(pic.description);  } }>
+                  <p>{pic.description}</p>
+                  </div>
+                  </>
                 }
               </>
               : <>
