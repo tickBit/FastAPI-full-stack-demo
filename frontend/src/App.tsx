@@ -12,33 +12,11 @@ import StarReviews from './utils/StarReviews';
 function App() {
 
   const { images, setImages } = useImage();
-  const { token } = useAuth();
-  
-  const isAdmin = localStorage.getItem('is_admin');
+  const { token, is_admin } = useAuth();
   
   const [edit, setEdit] = React.useState(false);
   const [description, setDescription] = React.useState("");
   const [edited, setEdited] = React.useState(false);
-  
-  /*
-  const handleStars = (e:undefined) => {
-    console.log(`Rated image ${e}`);
-    
-    
-    axios.post(`http://localhost:8000/rate/${id}`,
-      { stars: stars },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    .then(response => {
-      console.log('Rating submitted:', response.data);
-      // Optionally, update the images state to reflect the new average rating
-    })
-    .catch(error => {
-      console.error('Error submitting rating:', error);
-    });
-    
-  };
-  */
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
@@ -95,16 +73,19 @@ function App() {
       
   useEffect(() => {
     
-    axios.get('http://localhost:8000/images')
+    const fetchImages = async() => {
+      await axios.get('http://localhost:8000/images')
       .then(response => {
-        console.log('Fetched images:', response.data);
         setImages(response.data);
+        console.log(response.data);
       })
       .catch(error => {
         console.error('Error fetching images:', error);
       });
-      
-      
+    }
+
+    fetchImages();
+    
   }, [setImages]);
   
   return (
@@ -116,15 +97,15 @@ function App() {
              <>
             {images.map((pic: { id: number; filename: string; title: string; description: string; average_rating: number, total_ratings: number }) => (
               <div key={pic.id}>
-                {isAdmin === 'True' ?
+                {is_admin === 'True' ?
                 <div className="delete-pic" onClick={() => handleDelete(pic.id)}>Delete</div>
                 : <> {null} </>}
                 
                 <img src={`http://localhost:8000/media/images/${pic.filename}`} alt={pic.title} width="500" height="500" className='pic-image' />
+
+                <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} picId={pic.id} />                 
                 
-                <StarReviews value={pic.average_rating} totalRatings={pic.total_ratings} size={27} />                 
-                
-                {isAdmin === 'True' ? <>
+                {is_admin === 'True' ? <>
                 {!edit ? <>
                   <div className='pic-description' onDoubleClick={() => { setEdit(!edit); setDescription(pic.description);  } }>
                   <p>{pic.description}</p>

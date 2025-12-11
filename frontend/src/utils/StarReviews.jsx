@@ -1,36 +1,82 @@
 import { useState, useEffect } from "react";
 import React from "react";
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const StarReviews = (props) => {
 
+    const { token } = useAuth();
+        
     const [fullStars, setFullStars] = React.useState(0);
     const [halfStars, setHalfStars] = React.useState(0);
     const [emptyStars, setEmptyStars] = React.useState(0);
+    const [givenStars, setGivenStars] = React.useState(0.0);
+    const [newAvg, setNewAvg] = React.useState(0);
+    
+    function computeStars(value) {
+        const full = Math.floor(value);
+        const half = value % 1 >= 0.25 && value % 1 <= 0.75 ? 1 : 0;
+        const empty = 5 - full - half;
+        return { full, half, empty };
+    }
+    
+    const handleStars = async(picId) => {        
+        
+        await axios.post(
+        `http://localhost:8000/images/rate/${picId}`,
+        { stars: givenStars },
+        {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+            }
+        }
+        )
+        .then(response => {
+          console.log('Rating submitted:', response.data);
+
+            const updated = axios.get(`http://localhost:8000/images/${picId}`).then(resp => {
+                setNewAvg(resp.data.average_rating);
+                
+            }).catch(err => { 
+                console.log(err);
+            });
+        })
+        .catch(error => {
+          console.error('Error submitting rating:', error);
+        });
+        
+      };
     
     const handleClick = (e) => {
         if (fullStars == e) {
             setFullStars(0);
             setHalfStars(0);
             setEmptyStars(5);
+            setGivenStars(0);
             return;
         }
         
         setFullStars(parseInt(e));
         setHalfStars(0);
         setEmptyStars(5 - parseInt(e));
+        
+        setGivenStars(e);
     }
     
     useEffect(() => {
-        const full = Math.floor(props.value);
-        const half = (props.value - full) >= 0.5 ? 1 : 0;
-        const empty = 5 - full - half;
+        
+        const rating = newAvg === 0 ? props.value : newAvg;
+        const { full, half, empty } = computeStars(rating);
+
         setFullStars(full);
         setHalfStars(half);
         setEmptyStars(empty);
-    }, [props.value]);
+        
+    }, [props.value, newAvg]);
     
     return (
-        <div>
+        <div value={props.value}>
             {Array.from({ length: fullStars }, (_, i) =>
                 <svg key={i} onClick={() => handleClick(i + 1)}
                     xmlns="http://www.w3.org/2000/svg" width={props.size} height={props.size} fill="currentColor" className="bi bi-star-fill" style={{ color: "gold" }} viewBox="0 0 16 16">
@@ -51,7 +97,7 @@ const StarReviews = (props) => {
                     <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
                 </svg>
             )}
-            <img src="svgs/disk-svgrepo-com.svg" width="27" height="27" className="disk" />
+            <img src="svgs/disk-svgrepo-com.svg" width={props.size} height={props.size} className="disk" onClick={ () => handleStars(props.picId) } />
         </div>
     );
 }
