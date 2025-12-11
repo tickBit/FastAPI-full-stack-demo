@@ -15,6 +15,9 @@ const Login = () => {
         if (username === "") {
             setStatus("Logged out.");
             setBackgroundColor("lightgrey");
+        } else {
+            setStatus("Logged in.");
+            setBackgroundColor("lightgreen");
         }
     }, [username]);
        
@@ -40,7 +43,7 @@ const Login = () => {
         
             const data = resp.data;
             if (data && data.access_token) {
-                localStorage.setItem("is_admin", data.is_admin);
+
                 login(username, data.access_token, data.is_admin);
                 
                 setStatus("Login successful.");
@@ -59,6 +62,9 @@ const Login = () => {
             setStatus(error.response ? error.response.data.detail : "Error.");
             setBackgroundColor("red");
         }
+        
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
     }
     
     return (
