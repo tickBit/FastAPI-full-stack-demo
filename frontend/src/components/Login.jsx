@@ -49,7 +49,6 @@ const Login = () => {
                 setStatus("Login successful.");
                 setBackgroundColor("lightgreen");
                 
-                console.log(data);
                 /* The following is for the userinterface to show/hide features.
                    There is still check in the backend to prevent unauthorized access. */
     

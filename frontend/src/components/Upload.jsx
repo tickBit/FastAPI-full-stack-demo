@@ -3,11 +3,19 @@ import axios from 'axios';
 import Header from './Header';
 import React from 'react';
 import { useImage } from '../contexts/ImageContext';
+import Dialog from './Dialog';
 
 const Upload = () => {
     
     const { images, setImages } = useImage();
     const { token, isLoggedIn, is_admin } = useAuth();
+    const [title, setTitle] = React.useState("");
+    const [showDialog, setShowDialog] = React.useState(false);
+    
+    const onOk = () => {
+        setShowDialog(false);
+        return true;
+    }
     
     const handleUpload = async(e) => {
         e.preventDefault();
@@ -35,6 +43,8 @@ const Upload = () => {
             return;
         }
         console.log("Upload successful:", resp.data);
+        setTitle("Success!");
+        setShowDialog(true);
         
         // add new image to image context
         setImages(prevImages => [...prevImages, resp.data]);
@@ -47,7 +57,8 @@ const Upload = () => {
             <h2>Upload Page (admin only)</h2>
             <p>Here admin users can upload new pictures.</p>
         </div>
-        
+        {showDialog === true ? <Dialog title={title} onConfirm={onOk} ok="Ok" color="lightgreen" /> : null}
+
         {isLoggedIn === true  && is_admin === "True" ? <>
         <div className="upload">
             <form onSubmit={handleUpload}>
