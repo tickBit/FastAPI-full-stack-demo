@@ -10,6 +10,7 @@ const Upload = () => {
     const { images, setImages } = useImage();
     const { token, isLoggedIn, is_admin } = useAuth();
     const [title, setTitle] = React.useState("");
+    const [isError, setIsError] = React.useState(false);
     const [showDialog, setShowDialog] = React.useState(false);
     
     const onOk = () => {
@@ -40,14 +41,24 @@ const Upload = () => {
             });
         } catch (error) {
             console.error("Upload failed:", error.response ? error.response.data.detail : error.message);
+            setTitle("Upload failed");
+            setIsError(true);
+            setShowDialog(true);
+            
+            document.getElementById("desc").value = "";
+            document.getElementById("file").value = "";
             return;
         }
         console.log("Upload successful:", resp.data);
         setTitle("Success!");
+        setIsError(false);
         setShowDialog(true);
-        
+                
         // add new image to image context
         setImages(prevImages => [...prevImages, resp.data]);
+        
+        document.getElementById("desc").value = "";
+        document.getElementById("file").value = "";
     }
     
     return (
@@ -57,7 +68,9 @@ const Upload = () => {
             <h2>Upload Page (admin only)</h2>
             <p>Here admin users can upload new pictures.</p>
         </div>
-        {showDialog === true ? <Dialog title={title} onConfirm={onOk} ok="Ok" color="lightgreen" /> : null}
+        {showDialog === true && isError === false ? <Dialog title={title} onConfirm={onOk} ok="Ok" color="lightgreen" /> : null}
+        {showDialog === true && isError === true ? <Dialog title={title} onConfirm={onOk} ok="Ok" color="lightred" /> : null}
+
 
         {isLoggedIn === true  && is_admin === "True" ? <>
         <div className="upload">
