@@ -2,6 +2,7 @@
 
 - only admins can upload pictures and give & edit picture's description
 - admin users can only be created with backend's create_admin.py (`python create_admin.py`) script
+- admins are logged in after création from the frontend like other users
 
 - normal users can be registered and logged in from frontend
 - normal users (and admins) can give a star review to a picture, the review is saved pressing the disk icon
