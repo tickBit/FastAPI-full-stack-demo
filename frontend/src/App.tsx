@@ -16,19 +16,16 @@ function App() {
   
   const [edit, setEdit] = React.useState(-1);
   const [description, setDescription] = React.useState("");
-  const [edited, setEdited] = React.useState(false);
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
     
-    setEdited(false);
     const desc = document.querySelector("textarea")?.value.trim();
-        
-    setEdit(-1);
     
-    if (desc !== description) setEdited(true); else setEdited(false);
+    console.log(desc, description);
+    
+    if (desc?.toString() !== description.toString()) {
         
-    if (edited) {
       axios.put(`http://localhost:8000/update/${id}`,
       { description: desc },
       { headers: { 
@@ -47,6 +44,7 @@ function App() {
       console.error('Error updating description:', error);
     });
   };
+    setEdit(-1);
   }
   
   // admin's delete image
