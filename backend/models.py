@@ -13,27 +13,43 @@ class User(Base):
     email: Mapped[str]
     password_hash: Mapped[str]
     is_admin: Mapped[bool]
+    
     ratings: Mapped[list["Rating"]] = relationship(
         "Rating",
-        back_populates="user"
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
+
+
 class Image(Base):
     __tablename__ = "images"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     filename: Mapped[str]
     description: Mapped[str | None]
     uploaded_at: Mapped[datetime] = mapped_column(default=datetime.now)
-    
-    # relationship to ratings
-    ratings: Mapped[list["Rating"]] = relationship("Rating", back_populates="image")
-        
+
+    ratings: Mapped[list["Rating"]] = relationship(
+        "Rating",
+        back_populates="image",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+
 class Rating(Base):
     __tablename__ = "rating"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    image_id: Mapped[int] = mapped_column(ForeignKey("images.id"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    image_id: Mapped[int] = mapped_column(
+        ForeignKey("images.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
     stars: Mapped[int]
 
     user: Mapped["User"] = relationship(
@@ -46,6 +62,7 @@ class Rating(Base):
         back_populates="ratings"
     )
 
+
 class RatingOut(BaseModel):
     id: int
     user_id: int
@@ -53,6 +70,7 @@ class RatingOut(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class ImageOut(BaseModel):
     id: int
@@ -63,4 +81,3 @@ class ImageOut(BaseModel):
 
     class Config:
         orm_mode = True
-
