@@ -34,3 +34,16 @@
 
 ## Pictures
 
+Admin user view:
+
+![PicShow_Admin_user_view](https://github.com/user-attachments/assets/37d423c8-b823-40b2-9801-792daf86baed)
+
+
+Logged in user's (normal) view:
+
+![PicShow_Logged_in_users_view](https://github.com/user-attachments/assets/393cf61c-8140-4d98-a96f-29bf550780ce)
+
+
+Main view, when logged out:
+
+![PicShow_MainView_logged_out](https://github.com/user-attachments/assets/0debdad9-a874-4619-90fd-aac134a14795)
