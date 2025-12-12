@@ -21,9 +21,7 @@ function App() {
   const handleSaveDescription = (id: number) => {
     
     const desc = document.querySelector("textarea")?.value.trim();
-    
-    console.log(desc, description);
-    
+        
     if (desc?.toString() !== description.toString()) {
         
       axios.put(`http://localhost:8000/update/${id}`,
