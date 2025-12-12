@@ -12,6 +12,7 @@ const StarReviews = (props) => {
     const [emptyStars, setEmptyStars] = React.useState(0);
     const [givenStars, setGivenStars] = React.useState(0.0);
     const [newAvg, setNewAvg] = React.useState(0);
+    const [isReviewed, setIsReviewed] = React.useState(false);
     
     function computeStars(value) {
         const full = Math.floor(value);
@@ -21,7 +22,9 @@ const StarReviews = (props) => {
     }
     
     const handleStars = async(picId) => {        
-        
+      
+      if (isReviewed) {
+              
         await axios.post(
         `http://localhost:8000/images/rate/${picId}`,
         { stars: givenStars },
@@ -47,13 +50,21 @@ const StarReviews = (props) => {
         });
         
       };
+      
+      setIsReviewed(false);
+      
+    }
     
     const handleClick = (e) => {
+        
+        setIsReviewed(true);
+        
         if (fullStars == e) {
             setFullStars(0);
             setHalfStars(0);
             setEmptyStars(5);
             setGivenStars(0);
+
             return;
         }
         
