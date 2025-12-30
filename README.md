@@ -14,7 +14,7 @@
 1 Database
 
 - you'll need a PostgreSQL database to run this called `show_db`
-- create .env and put there:
+- create .env into backend folder and put there:
   - DATABASE_URL=`postgresql+psycopg2://POSTGRES_USER:PASSWORD@localhost:5432/show_db`
     - POSTGRES_USER is *your* postgres username, PASSWORD is *your* PostgreSQL password
   - SECRET_KEY=Super_secret_key_for_my_yours_and_everyone_elses_eyes_only
