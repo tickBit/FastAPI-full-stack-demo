@@ -23,7 +23,7 @@
 
 - `cd backend`
 - create virtual environment and activate it, then
-- install requirement from requirements.txt
+- install requirements from requirements.txt
 - run `uvicorn main:app`
 
 3 Frontend
