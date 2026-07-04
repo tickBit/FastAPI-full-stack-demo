@@ -6,6 +6,7 @@ from database import Base
 from sqlalchemy import Boolean
 
 class User(Base):
+    __table_args__ = (UniqueConstraint("email","username"),)
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
