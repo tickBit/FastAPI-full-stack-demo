@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 import Dialog from './Dialog';
 import Header from './Header';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +10,8 @@ const Register = () => {
     const { login } = useAuth();
     const [isError, setIsError] = React.useState(false);
     const [errorTitle, setErrorTitle] = React.useState("");
+    
+    const navigate = useNavigate();
     
     const onOk = () => {
         setIsError(false);
@@ -57,6 +60,7 @@ const Register = () => {
                         // never from frontend
                         // that's why is_admin parameter is always "False" here   
                         login(response.data.username, response.data.token, "False");
+                        navigate("/");
                         
                 }).catch(response => {
                         console.log(response);
