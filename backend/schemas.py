@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 from datetime import datetime
 
 class UserCreate(BaseModel):
@@ -21,8 +21,8 @@ class UserOut(BaseModel):
     username: str
     email: str
     is_admin: bool
-    class Config:
-        orm_mode = True
+    
+    model_config = ConfigDict(from_attributes=True)
 
 class Token(BaseModel):
     access_token: str
@@ -36,8 +36,7 @@ class ImageBase(BaseModel):
     average_rating: float | None = None  # add this
     total_ratings: int = 0  # add this
     
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RatingCreate(BaseModel):
@@ -47,5 +46,4 @@ class RatingOut(BaseModel):
     id: int
     stars: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

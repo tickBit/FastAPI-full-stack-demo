@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
@@ -69,8 +69,7 @@ class RatingOut(BaseModel):
     user_id: int
     stars: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ImageOut(BaseModel):
@@ -80,5 +79,4 @@ class ImageOut(BaseModel):
     average_rating: float | None
     total_ratings: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
