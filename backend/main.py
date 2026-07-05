@@ -1,4 +1,6 @@
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, Form
+import uvicorn
+
+from fastapi import FastAPI, Query, UploadFile, File, Depends, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -80,12 +82,11 @@ def get_admin_user(current_user=Depends(get_current_user)):
     return current_user
 
 # Admin: delete pic
-
 @app.delete("/admin/delete/{image_id}")
 def delete_image(
     image_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_admin_user)   # <-- tärkeä osa
+    admin: User = Depends(get_admin_user)
 ):
     if not admin.is_admin:
         raise HTTPException(status_code=403, detail="Admins only")
@@ -108,7 +109,7 @@ async def upload_image(
     db: Session = Depends(get_db),
     file: UploadFile = File(...),
     description: Annotated[str | None, Form()] = None,
-    admin: User = Depends(get_admin_user)   # <-- tärkeä osa
+    admin: User = Depends(get_admin_user)
 ):
     # ensure images folder exists
     os.makedirs("media/images", exist_ok=True)
@@ -126,8 +127,8 @@ async def upload_image(
 
 # ---------- USER: LIST IMAGES ----------
 @app.get("/images", response_model=list[dict])
-def list_images(db: Session = Depends(get_db)):
-    imgs = crud.list_images(db)
+def list_images(page: int, db: Session = Depends(get_db)):
+    imgs = crud.list_images(db, page)
     
     arr = []
     for img in imgs:
@@ -220,3 +221,6 @@ def update_image(
     db.commit()
     db.refresh(img)
     return img
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000, reload=True)

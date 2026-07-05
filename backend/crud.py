@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
 from models import Image, Rating
 from passlib.context import CryptContext
+from sqlalchemy import select
+from fastapi import Query
+
 from models import User
 
+PAGE_SIZE = 2
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
@@ -24,9 +28,18 @@ def create_image(db: Session, filename: str, description: str):
     db.refresh(img)
     return img
 
-def list_images(db: Session):
-    return db.query(Image).all()
+def list_images(db: Session, page: int):
+    offset = (page - 1) * PAGE_SIZE
 
+    images = (
+        db.query(Image)
+        .offset(offset)
+        .limit(PAGE_SIZE)
+        .all()
+    )
+
+    return images
+    
 def add_or_update_rating(db: Session, image_id: int, user_id: int, stars: int):
     existing = db.query(Rating).filter(
         Rating.image_id == image_id,
