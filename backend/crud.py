@@ -37,8 +37,10 @@ def list_images(db: Session, page: int):
         .limit(PAGE_SIZE)
         .all()
     )
-
-    return images
+    
+    count = db.query(Image).count()
+    
+    return images, count
     
 def add_or_update_rating(db: Session, image_id: int, user_id: int, stars: int):
     existing = db.query(Rating).filter(

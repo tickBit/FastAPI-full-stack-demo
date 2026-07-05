@@ -126,15 +126,15 @@ async def upload_image(
 
 
 # ---------- USER: LIST IMAGES ----------
-@app.get("/images", response_model=list[dict])
+@app.get("/images", response_model=list)
 def list_images(page: int, db: Session = Depends(get_db)):
-    imgs = crud.list_images(db, page)
-    
+    imgs, count = crud.list_images(db, page)
+        
     arr = []
     for img in imgs:
         avg_rating = db.query(func.avg(Rating.stars)).filter(Rating.image_id == img.id).scalar()
         arr.append({"id": img.id, "filename": img.filename ,"average_rating": avg_rating, "description": img.description })
-    return arr
+    return arr, {"count": count}
 
 @app.get("/images/{image_id}", response_model=ImageOut)
 def get_image(image_id: int, db: Session = Depends(get_db)):
