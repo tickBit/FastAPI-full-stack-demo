@@ -4,10 +4,10 @@ import MyChatbot from './components/MyChatbot'
 import Header from './components/Header'
 import { useImage } from './contexts/ImageContext'
 import { useAuth } from './contexts/AuthContext'
-import './App.css'
 import './utils/StarReviews'
 import StarReviews from './utils/StarReviews';
-
+import './App.css'
+import { Link } from 'react-router';
   
 function App() {
 
@@ -16,6 +16,8 @@ function App() {
   
   const [edit, setEdit] = React.useState(-1);
   const [description, setDescription] = React.useState("");
+  const [page, setPage] = React.useState(1);
+  const [count, setCount] = React.useState(0);
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
@@ -68,10 +70,11 @@ function App() {
   useEffect(() => {
     
     const fetchImages = async() => {
-      await axios.get('http://localhost:8000/images')
+      await axios.get(`http://localhost:8000/images?page=${page}`)
       .then(response => {
-        setImages(response.data);
-        console.log(response.data);
+        setImages(response.data[0]);
+        console.log(response.data[0]);
+        setCount(response.data[1].count);
       })
       .catch(error => {
         console.error('Error fetching images:', error);
@@ -80,7 +83,7 @@ function App() {
 
     fetchImages();
     
-  }, [setImages]);
+  }, [page, setImages]);
   
   return (
     <>
@@ -127,6 +130,20 @@ function App() {
               </div>
             ))}
             </>
+            }
+            
+            { (page > 1 && page * 2 < count) &&
+             (
+              <>
+              <Link onClick={() => setPage(page + 1)} to="">Next</Link> <Link onClick={() => setPage(page - 1)} to="">Prev</Link>
+              </>
+              )
+            }
+            {
+             (page === 1 && count > 2) && ( <Link onClick={() => setPage(page + 1)} to="">Next</Link> )
+            }
+            {
+             (2 * page - count > 0) && ( <Link onClick={() => setPage(page - 1)} to="">Prev</Link> )
             }
           </div>
           <MyChatbot />
