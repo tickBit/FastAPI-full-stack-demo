@@ -3,11 +3,14 @@ import { Link } from "react-router";
 import Header from "./Header";
 import { useAuth } from "../contexts/AuthContext";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const Login = () => {
 
     const { username, login } = useAuth();    
-    
+
+    const navigate = useNavigate();
+        
     const [status, setStatus] = React.useState("Waiting");
     const [backgroundColor, setBackgroundColor] = React.useState("lightgrey");
 
@@ -48,6 +51,8 @@ const Login = () => {
                 
                 setStatus("Login successful.");
                 setBackgroundColor("lightgreen");
+                
+                navigate("/");
                 
                 /* The following is for the userinterface to show/hide features.
                    There is still check in the backend to prevent unauthorized access. */
