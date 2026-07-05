@@ -1,6 +1,7 @@
 import uvicorn
-
-from fastapi import FastAPI, Query, UploadFile, File, Depends, HTTPException, Form
+import math
+import time
+from fastapi import FastAPI, Query, UploadFile, File, Depends, HTTPException, Form, status
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -12,7 +13,7 @@ from database import SessionLocal, engine
 from models import Base, User, Image, ImageOut, Rating, RatingOut
 import crud
 from schemas import ImageBase, RatingCreate, UserCreate
-from datetime import datetime, timedelta
+from datetime import timedelta
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,7 +25,7 @@ password_hash = PasswordHash.recommended()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -43,7 +44,6 @@ app.add_middleware(
 # Serve static images
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
-
 # Dependency: get DB session
 def get_db():
     db = SessionLocal()
@@ -57,12 +57,20 @@ def verify_password(plain_password, hashed_password):
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.now() + (expires_delta or timedelta(minutes=15))
+    expire = round(time.time() * 1000) + ACCESS_TOKEN_EXPIRE_MINUTES * 60 * 1000
     to_encode.update({"exp": expire})
+     
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if (int(payload.get("exp")) < math.floor(time.time() * 1000)): raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
@@ -86,7 +94,7 @@ def get_admin_user(current_user=Depends(get_current_user)):
 def delete_image(
     image_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_admin_user),
 ):
     if not admin.is_admin:
         raise HTTPException(status_code=403, detail="Admins only")
@@ -109,7 +117,7 @@ async def upload_image(
     db: Session = Depends(get_db),
     file: UploadFile = File(...),
     description: Annotated[str | None, Form()] = None,
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_admin_user),
 ):
     # ensure images folder exists
     os.makedirs("media/images", exist_ok=True)
@@ -124,6 +132,17 @@ async def upload_image(
     img = crud.create_image(db, filename, description)
     return img
 
+@app.get("/validate", response_model=dict)
+def validate(token: str = Depends(oauth2_scheme)):
+
+    if (token):
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            if (int(payload.get("exp")) < math.floor(time.time() * 1000)): raise HTTPException(status_code=401, detail="Token expired")
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expired")
+    
+    else:    return {"Response": "Ok"}
 
 # ---------- USER: LIST IMAGES ----------
 @app.get("/images", response_model=list)
@@ -160,8 +179,9 @@ def rate_image(
     image_id: int,
     rating: RatingCreate,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user)
+    user=Depends(get_current_user),
 ):
+    
     if not 1 <= rating.stars <= 5:
         raise HTTPException(status_code=400, detail="Rating must be 1-5")
 
@@ -208,7 +228,7 @@ def update_image(
     image_id: int,
     description: str = Form(...),
     db: Session = Depends(get_db),
-    admin: User = Depends(get_admin_user)
+    admin: User = Depends(get_admin_user),
 ):
     if admin.is_admin is False:
         raise HTTPException(status_code=403, detail="Admins only")
