@@ -1,6 +1,6 @@
 # React (+ TypeScript + Vite) + Python FastAPI full-stack demo
 
-Picture gallery with pagination. 2 pictures / page.
+Picture gallery with pagination. 2 pictures / page. Token validation (check if it's expired) in the backend. Any server interaction from frontend logs the user out, if the token is expired...
 
 Some features:
 
