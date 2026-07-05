@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const StarReviews = (props) => {
 
-    const { token, isLoggedIn } = useAuth();
+    const { token, isLoggedIn, logout } = useAuth();
         
     const [fullStars, setFullStars] = React.useState(0);
     const [halfStars, setHalfStars] = React.useState(0);
@@ -13,7 +13,8 @@ const StarReviews = (props) => {
     const [givenStars, setGivenStars] = React.useState(0.0);
     const [newAvg, setNewAvg] = React.useState(0);
     const [isReviewed, setIsReviewed] = React.useState(false);
-    
+    const [error, setError] = React.useState("");
+        
     function computeStars(value) {
         const full = Math.floor(value);
         const half = value % 1 >= 0.25 && value % 1 <= 0.75 ? 1 : 0;
@@ -46,6 +47,7 @@ const StarReviews = (props) => {
             });
         })
         .catch(error => {
+          setError(error.response.data.detail);
           console.error('Error submitting rating:', error);
         });
         
@@ -79,6 +81,8 @@ const StarReviews = (props) => {
     
     useEffect(() => {
         
+        if (error === "Token expired") logout();
+        
         const rating = newAvg === 0 ? props.value : newAvg;
         const { full, half, empty } = computeStars(rating);
 
@@ -86,7 +90,7 @@ const StarReviews = (props) => {
         setHalfStars(half);
         setEmptyStars(empty);
         
-    }, [props.value, newAvg]);
+    }, [error, props.value, newAvg]);
     
     return (
         <div value={props.value}>

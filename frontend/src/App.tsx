@@ -8,16 +8,17 @@ import './utils/StarReviews'
 import StarReviews from './utils/StarReviews';
 import './App.css'
 import { Link } from 'react-router';
-  
+
 function App() {
 
   const { images, setImages } = useImage();
-  const { token, is_admin } = useAuth();
+  const { token, is_admin, logout } = useAuth();
   
   const [edit, setEdit] = React.useState(-1);
   const [description, setDescription] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [count, setCount] = React.useState(0);
+  const [error, setError] = React.useState("");
   
   // save edited description to backend
   const handleSaveDescription = (id: number) => {
@@ -40,8 +41,8 @@ function App() {
         img.id === id ? { ...img, description: desc } : img
       ));
     })
-    .catch(error => {
-      console.error('Error updating description:', error);
+    .catch(err => {
+      setError(err.response.data.detail);
     });
   };
     setEdit(-1);
@@ -49,41 +50,56 @@ function App() {
   
   // admin's delete image
   const handleDelete = async(id: number) => {
-    
-    let resp;
-    
-    try {
-      resp = await axios.delete(`http://localhost:8000/admin/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }});
-   
+
+    await axios.delete(`http://localhost:8000/admin/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }})
+    .then(resp => {
       console.log('Image deleted:', resp.data);
       // Update the images state to remove the deleted image
       setImages(images.filter((img: { id: number; filename: string; title: string; description: string; }) => img.id !== id));
-  
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
+
+    }).catch(err => {
+      console.log(err)
+      setError(err.response.data.detail);
+      console.log(err);
+    })
   };
-  
-  
       
   useEffect(() => {
+    console.log(error)
+    if (error === "Token expired") logout();
     
     const fetchImages = async() => {
+      
+      if (token !== null) {
+        await axios.get(`http://localhost:8000/validate`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+            if (err.response.data.detail) setError(err.response.data.detail);
+        });
+      }
+      
       await axios.get(`http://localhost:8000/images?page=${page}`)
       .then(response => {
         setImages(response.data[0]);
         console.log(response.data[0]);
         setCount(response.data[1].count);
       })
-      .catch(error => {
-        console.error('Error fetching images:', error);
+      .catch(err => {
+        setError(err.response.data.detail);
+        console.error('Error fetching images:', err);
       });
     }
 
     fetchImages();
     
-  }, [page, setImages]);
+  }, [error, token, page, setImages, logout]);
   
   return (
     <>
