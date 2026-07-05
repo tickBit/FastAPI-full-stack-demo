@@ -92,7 +92,12 @@ function App() {
         setCount(response.data[1].count);
       })
       .catch(err => {
-        setError(err.response.data.detail);
+        try {
+          setError(err.response.data.detail);
+        } catch (err) {
+          console.log(err);
+        }
+        
         console.error('Error fetching images:', err);
       });
     }
