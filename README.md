@@ -1,5 +1,9 @@
 # React (+ TypeScript + Vite) + Python FastAPI full-stack demo
 
+Picture gallery with pagination. 2 pictures / page.
+
+Some features:
+
 - only admins can upload pictures and give & edit picture's description
 - admin users can only be created with backend's create_admin.py (`python create_admin.py`) script
 - admins are logged in after création from the frontend like other users
